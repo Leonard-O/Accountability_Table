@@ -1,0 +1,614 @@
+:root {
+  /* Premium Dark Theme Palette (HSL) */
+  --bg-color: 240, 10%, 10%;
+  /* Very dark cool grey/blue */
+  --card-bg: 240, 10%, 16%;
+  /* Slightly lighter for cards */
+  --text-primary: 0, 0%, 95%;
+  /* Off-white */
+  --text-secondary: 240, 5%, 70%;
+  /* Muted grey */
+
+  --accent-green: 145, 65%, 50%;
+  /* Vibrant but not harsh green */
+  --accent-red: 340, 80%, 60%;
+  /* Modern red/pinkish */
+  --glass-border: 255, 255, 255, 0.1;
+
+  /* Glassmorphism */
+  --glass-bg: rgba(30, 30, 40, 0.7);
+  --glass-blur: 12px;
+
+  --font-main: 'Inter', sans-serif;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-main);
+  background: hsl(var(--bg-color));
+  color: hsl(var(--text-primary));
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem;
+  overflow-x: hidden;
+}
+
+h1,
+h2,
+h3 {
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+#app {
+  width: 100%;
+  max-width: 1400px;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+/* Glass Card Utility */
+.glass-panel {
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid rgba(var(--glass-border));
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  border-radius: var(--radius-lg);
+}
+
+/* Header */
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  padding: 0 1rem;
+}
+
+.title {
+  font-size: 2rem;
+  background: linear-gradient(to right, hsl(var(--accent-green)), hsl(180, 70%, 50%));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  margin: 0;
+}
+
+/* Controls */
+.view-controls {
+  display: flex;
+  gap: 1rem;
+}
+
+button {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: hsl(var(--text-primary));
+  padding: 0.6rem 1.2rem;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: inherit;
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+button:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateY(-2px);
+}
+
+button.active {
+  background: hsl(var(--accent-green), 0.15);
+  border-color: hsl(var(--accent-green));
+  color: hsl(var(--accent-green));
+  box-shadow: 0 0 15px hsl(var(--accent-green), 0.2);
+}
+
+/* 365 Grid Layout */
+.grid-wrapper {
+  max-width: 1400px;
+  /* Bigger layout for full grid */
+  margin: 0 auto;
+  width: 100%;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.grid-365 {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+  gap: 12px;
+  padding: 0;
+}
+
+.day-cell {
+  aspect-ratio: 1;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  position: relative;
+  overflow: hidden;
+}
+
+.day-cell:hover {
+  transform: translateY(-4px) scale(1.05);
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: var(--text-primary);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  z-index: 10;
+}
+
+.day-cell.studied {
+  background: hsl(var(--accent-green), 0.2);
+  border-color: hsl(var(--accent-green), 0.5);
+  color: hsl(var(--accent-green));
+  box-shadow: 0 0 15px hsl(var(--accent-green), 0.2);
+}
+
+.day-cell.studied:hover {
+  background: hsl(var(--accent-green), 0.3);
+  box-shadow: 0 0 25px hsl(var(--accent-green), 0.4);
+}
+
+.day-cell.skipped {
+  background: hsl(var(--accent-red), 0.2);
+  border-color: hsl(var(--accent-red), 0.5);
+  color: hsl(var(--accent-red));
+  box-shadow: 0 0 15px hsl(var(--accent-red), 0.2);
+}
+
+.day-cell.skipped:hover {
+  background: hsl(var(--accent-red), 0.3);
+  box-shadow: 0 0 25px hsl(var(--accent-red), 0.4);
+}
+
+/* Day States */
+.day-cell.disabled-day {
+  cursor: default;
+  opacity: 0.4;
+  pointer-events: none;
+  border-color: transparent;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.day-cell.current-day {
+  border-color: hsl(var(--accent-green));
+  box-shadow: 0 0 10px hsl(var(--accent-green), 0.3);
+  z-index: 5;
+}
+
+/* Calendar View */
+.calendar-wrapper {
+  max-width: 800px;
+  margin: 0 auto;
+  width: 100%;
+  padding: 1.25rem;
+}
+
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.calendar-title {
+  margin: 0;
+  font-size: 1.5rem;
+  color: hsl(var(--text-primary));
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+}
+
+.weekday-label {
+  text-align: center;
+  font-weight: 600;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  padding-bottom: 0.5rem;
+}
+
+.calendar-day {
+  font-size: 1rem;
+}
+
+/* Overrides for calendar specifically if needed, but disabled-day class should handle it */
+.calendar-day.disabled-day {
+  opacity: 0.2;
+}
+
+/* Grid Controls */
+.grid-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.toggle-group {
+  display: flex;
+  gap: 0.5rem;
+  background: rgba(0, 0, 0, 0.2);
+  padding: 4px;
+  border-radius: var(--radius-md);
+}
+
+.toggle-group button {
+  padding: 0.4rem 0.8rem;
+  font-size: 0.85rem;
+  background: transparent;
+  border: none;
+  opacity: 0.7;
+  color: var(--text-primary);
+  cursor: pointer;
+  border-radius: 8px;
+}
+
+.toggle-group button.active-toggle {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-primary);
+  opacity: 1;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.nav-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.nav-group button {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 0.4rem 0.8rem;
+  min-width: 40px;
+  color: var(--text-primary);
+  cursor: pointer;
+  border-radius: 8px;
+}
+
+.nav-group button:disabled {
+  opacity: 0.2;
+  cursor: default;
+}
+
+.nav-title {
+  font-weight: 600;
+  min-width: 100px;
+  text-align: center;
+}
+
+/* Modal */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(5px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+
+.modal-overlay.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.modal-content {
+  width: 90%;
+  max-width: 400px;
+  text-align: center;
+  padding: 2.5rem;
+  border: 1px solid rgba(var(--accent-green), 0.3);
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.5);
+}
+
+.timer-display {
+  font-size: 4rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  margin: 1.5rem 0;
+  color: hsl(var(--accent-green));
+  text-shadow: 0 0 20px rgba(var(--accent-green), 0.4);
+}
+
+.timer-display.paused {
+  color: hsl(var(--accent-red));
+  text-shadow: 0 0 20px rgba(var(--accent-red), 0.4);
+  animation: blink 1s infinite;
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.status-msg {
+  font-size: 1.1rem;
+  margin-bottom: 2rem;
+  color: var(--text-secondary);
+  min-height: 1.5em;
+}
+
+.timer-controls {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.primary-btn {
+  background: hsl(var(--accent-green));
+  color: #000;
+  border: none;
+  font-weight: 600;
+  padding: 0.8rem 2rem;
+  font-size: 1rem;
+}
+
+.primary-btn:hover {
+  background: hsl(var(--accent-green));
+  filter: brightness(1.2);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.secondary-btn {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: var(--text-primary);
+}
+
+.secondary-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 600px) {
+  body {
+    padding: 1rem;
+  }
+
+  header {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: center;
+  }
+
+  .title {
+    font-size: 1.8rem;
+    text-align: center;
+    width: 100%;
+    margin-bottom: 0.5rem;
+  }
+
+  .view-controls {
+    width: 100%;
+    justify-content: center;
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .view-controls button,
+  .grid-controls button {
+    flex: 1;
+    text-align: center;
+    padding: 0.8rem;
+    font-size: 1rem;
+  }
+
+  /* Adjust Grid for smaller screens */
+  .grid-365 {
+    grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
+    gap: 6px;
+    padding: 0.8rem;
+  }
+
+  .day-cell {
+    font-size: 0.9rem;
+    border-radius: 8px;
+  }
+
+  /* Adjust Calendar for smaller screens */
+  .calendar-wrapper {
+    padding: 1.25rem;
+    width: 100%;
+  }
+
+  .calendar-header {
+    margin-bottom: 0.8rem;
+    padding: 0 0.5rem;
+  }
+
+  .calendar-title {
+    font-size: 1.1rem;
+    white-space: nowrap;
+  }
+
+  .calendar-grid {
+    gap: 2px;
+  }
+
+  .weekday-label {
+    font-size: 0.7rem;
+    padding-bottom: 0.2rem;
+  }
+
+  .calendar-day {
+    font-size: 0.85rem;
+    border-radius: 6px;
+  }
+
+  /* Ultra-small screens (e.g. Galaxy Fold) */
+  @media (max-width: 350px) {
+    .calendar-wrapper {
+      padding: 0.5rem;
+      /* Revert to smaller padding for tiny screens */
+    }
+
+    .calendar-title {
+      font-size: 0.9rem;
+    }
+
+    .calendar-header {
+      padding: 0;
+      gap: 0.2rem;
+    }
+
+    .calendar-header button {
+      padding: 0.4rem;
+      min-width: 30px;
+    }
+
+    .day-cell {
+      font-size: 0.8rem;
+    }
+  }
+
+  .grid-controls {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .toggle-group,
+  .nav-group {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .timer-display {
+    font-size: 3rem;
+  }
+}
+
+/* Timer Config */
+.timer-config {
+  margin: 1rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.timer-config label {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.timer-config span {
+  color: hsl(var(--accent-green));
+  font-weight: 600;
+}
+
+input[type=range] {
+  width: 80%;
+  accent-color: hsl(var(--accent-green));
+  cursor: pointer;
+}
+
+/* Research Toggle */
+.research-toggle-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 26px;
+}
+
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.2);
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  transition: .4s;
+}
+
+input:checked+.slider {
+  background-color: hsl(210, 80%, 60%);
+  /* Blue for Research */
+}
+
+input:checked+.slider:before {
+  transform: translateX(24px);
+}
+
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+
+.toggle-label {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+/* Research Active State */
+.timer-display.researching {
+  color: hsl(210, 80%, 60%) !important;
+  text-shadow: 0 0 20px rgba(50, 150, 255, 0.4) !important;
+  animation: none !important;
+}
+
+.status-msg.researching {
+  color: hsl(210, 80%, 60%) !important;
+}
